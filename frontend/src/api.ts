@@ -1,4 +1,5 @@
-export const apiUrl = (path: string) => `${(import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "")}${path}`;
+const API_BASE_URL = "https://lenny-backend-185315266392.us-east1.run.app";
+export const apiUrl = (path: string) => `${API_BASE_URL}${path}`;
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response;
