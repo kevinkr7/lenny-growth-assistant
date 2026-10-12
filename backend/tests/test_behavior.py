@@ -3,6 +3,7 @@ import json
 import pytest
 
 from app.agent import needs_history, run_agent
+from app.config import rooted_path, settings
 from app.evidence import contextual_passage_metadata, metadata_integrity, passage_metadata, stable_citations
 from app.grounding import quotation_problems, review_grounding
 from app.retrieval import focus_query
@@ -254,8 +255,11 @@ async def test_writing_invokes_skill(monkeypatch):
     async def search(_):
         return [source("S1")], 1
 
+    guide = rooted_path(settings().ship30_guide_file).read_text(encoding="utf-8")
+
     async def respond(provider, system, prompt):
-        assert "Ship 30 writing process" in system and "1,250" in system
+        assert guide in system
+        assert "1,125 through 1,375 words" in system
         yield "ABSTAIN"
 
     monkeypatch.setattr("app.agent.search_knowledge_base", search)

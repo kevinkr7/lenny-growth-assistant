@@ -5,6 +5,7 @@ import pytest
 
 from app.agent import ABSTENTION, bounded_history, retrieval_query, route, run_agent
 from app.artifacts import citations, normalize_citations, sanitize_html, validate, word_count
+from app.config import settings
 from app.errors import AppError
 from app.ingest import chunk_text, load_demo_manifest, parse_transcript
 from app.retrieval import focus_query
@@ -182,6 +183,9 @@ async def test_abstention_does_not_call_provider(monkeypatch):
 
 
 async def test_agent_repairs_once_and_retains_verified_sources(monkeypatch):
+    # run_agent checks configuration before invoking the provider. Keep this
+    # test offline while exercising the Gemini citation-repair path.
+    monkeypatch.setattr(settings(), "gemini_api_key", "unit-test-gemini-key")
 
     async def search(_):
         return evidence(), 2
