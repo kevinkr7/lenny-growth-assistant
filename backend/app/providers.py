@@ -5,6 +5,8 @@ import time
 from collections.abc import AsyncIterator
 
 import httpx
+import google.auth.transport.requests
+import google.oauth2.id_token
 
 from app.config import settings
 from app.errors import AppError
@@ -164,9 +166,19 @@ async def stream_pi_agent(provider: str, system: str, prompt: str) -> AsyncItera
     completed = False
     timeout = httpx.Timeout(timeout_seconds, connect=5, read=timeout_seconds)
     try:
+        auth_request = google.auth.transport.requests.Request()
+        identity_token = google.oauth2.id_token.fetch_id_token(
+            auth_request, cfg.pi_agent_url.rstrip("/")
+        )
+        headers = {"Authorization": f"Bearer {identity_token}"}
         async with asyncio.timeout(timeout_seconds):
             async with httpx.AsyncClient(timeout=timeout) as client:
-                async with client.stream("POST", f"{cfg.pi_agent_url.rstrip('/')}/generate", json=request) as response:
+                async with client.stream(
+                    "POST",
+                    f"{cfg.pi_agent_url.rstrip('/')}/generate",
+                    json=request,
+                    headers=headers,
+                ) as response:
                     if response.status_code >= 400:
                         try:
                             frame = json.loads((await response.aread()).decode("utf-8"))

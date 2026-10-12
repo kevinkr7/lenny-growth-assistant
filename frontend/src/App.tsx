@@ -21,7 +21,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { api, streamChat } from "./api";
+import { api, apiUrl, streamChat } from "./api";
 import { Markdown } from "./Markdown";
 import { Sources } from "./Sources";
 import { ArtifactPane } from "./ArtifactPane";
@@ -105,7 +105,7 @@ export default function App() {
   const refreshStatus = useCallback(async (signal?: AbortSignal) => {
     setCheckingProvider(true);
     try {
-      const res = await fetch("/readyz", {
+      const res = await fetch(apiUrl("/readyz"), {
           signal: signal ?? AbortSignal.timeout(10000),
         }),
         state: Readiness = await res.json();

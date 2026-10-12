@@ -1,7 +1,9 @@
+export const apiUrl = (path: string) => `${(import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "")}${path}`;
+
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response;
   try {
-    response = await fetch(path, {
+    response = await fetch(apiUrl(path), {
       ...init,
       headers: { "Content-Type": "application/json", ...init?.headers },
     });
@@ -24,7 +26,7 @@ export async function streamChat(
   signal: AbortSignal,
   onEvent: (event: string, data: any) => void,
 ) {
-  const response = await fetch("/api/chat/stream", {
+  const response = await fetch(apiUrl("/api/chat/stream"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
