@@ -1,0 +1,17 @@
+{
+  "citation": "S3",
+  "source_id": "fixture-synthetic",
+  "chunk_id": "fixture-synthetic-001",
+  "guest": "Synthetic Test Guest",
+  "episode_title": "Synthetic test episode: onboarding labels",
+  "publish_date": "2099-01-01",
+  "revision": "synthetic-fixture-v1",
+  "source_url": "https://example.invalid/synthetic-test/transcript.md",
+  "path": "episodes/synthetic-test-guest/transcript.md",
+  "repository": "https://example.invalid/synthetic-test-repository",
+  "opening_speaker": "Synthetic Test Guest",
+  "speakers": ["Synthetic Test Guest"],
+  "timestamp_start": "00:05:00",
+  "timestamp_end": "00:05:00",
+  "excerpt": "(00:05:00): In this fictional example, a product team showed two onboarding labels to volunteer users. The team noted which label participants understood more quickly and used that observation to select its next small usability test. This synthetic passage was written for automated tests; it is not from a real person, company, or podcast."
+}

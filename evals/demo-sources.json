@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "repository": "https://github.com/thechangelog/transcripts",
+  "revision": "master",
+  "license": {
+    "spdx_id": "CC-BY-SA-4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "attribution": "Changelog Media LLC"
+  },
+  "sources": [
+    {
+      "path": "founderstalk/founders-talk-66.md",
+      "guest": "Sahil Lavingia",
+      "episode_title": "Failing to build a billion-dollar company",
+      "publish_date": "2019-06-14",
+      "episode_url": "https://changelog.com/founderstalk/66"
+    }
+  ]
+}

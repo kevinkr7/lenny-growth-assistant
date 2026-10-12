@@ -1,0 +1,75 @@
+{
+  "description": "User-reported manual regressions; fixtures, not test results.",
+  "cases": [
+    {
+      "id": 1,
+      "name": "Exact-output instruction",
+      "prompt": "Reply with exactly this text and nothing else: OLLAMA_TEST_OK"
+    },
+    {
+      "id": 2,
+      "name": "Keyword acknowledgement without retrieval",
+      "prompt": "Without searching the knowledge base, acknowledge this keyword in one short sentence: ORCHID-472"
+    },
+    {
+      "id": 3,
+      "name": "Simple greeting",
+      "prompt": "Reply with a single friendly greeting in exactly one sentence. Do not search the knowledge base or recommend anything."
+    },
+    {
+      "id": 4,
+      "name": "Retrieve source S3 and support a claim",
+      "prompt": "Using your indexed Lenny knowledge base, retrieve source S3. State one specific claim that the actual transcript supports, then provide the exact supporting passage and its source citation. Do not invent a quotation. If S3 cannot be retrieved or does not support a claim, explicitly say so."
+    },
+    {
+      "id": 5,
+      "name": "Episode metadata extraction",
+      "prompt": "Search your indexed Lenny knowledge base for the episode featuring Elena Verna. Give the exact episode title, guest name, and publication date using the indexed source metadata. Cite the source you actually retrieved. If any field is unavailable, explicitly label it \"Unavailable\" rather than guessing."
+    },
+    {
+      "id": 6,
+      "name": "Simple grounded question",
+      "prompt": "Search the indexed Lenny transcripts for Elena Verna. What specific growth tactic does the retrieved passage discuss? Answer in two sentences maximum and cite the retrieved passage. If retrieval returns no relevant passage, say \"No relevant passage found.\""
+    },
+    {
+      "id": 7,
+      "name": "Raw evidence extraction",
+      "prompt": "Search the indexed knowledge base for Elena Verna. Do not draft an answer or generate recommendations. Return only the retrieved evidence: source ID, exact episode title, guest name, publication date, and the verbatim text of one relevant passage. If a field is missing, write \"Unavailable\". Do not invent or rewrite any source text."
+    },
+    {
+      "id": 8,
+      "name": "Grounded explanation without a quotation",
+      "prompt": "According to Elena Verna's indexed podcast transcript, why shouldn't a growth team simply copy its competitors? Answer in two short sentences and cite the relevant source ID. Use only what the transcript supports. Do not provide a quotation."
+    },
+    {
+      "id": 9,
+      "name": "Conversation follow-up memory",
+      "prompt": "What was the main question I just asked you about Elena Verna? Answer in one short sentence. Do not search the knowledge base."
+    },
+    {
+      "id": 10,
+      "name": "Conversation history after refresh",
+      "prompt": "Without searching the knowledge base, what was the main question I asked immediately before asking about conversation history? Answer in one sentence."
+    },
+    {
+      "id": 11,
+      "name": "Unsupported-information abstention",
+      "prompt": "According to the indexed Lenny transcripts, what exact revenue did Elena Verna's company generate in its most recent fiscal quarter? Give the amount and cite the supporting source. If the indexed transcripts do not contain this information, say \"The indexed transcripts do not provide this information.\" Do not guess or use outside sources."
+    },
+    {
+      "id": 12,
+      "name": "Simple Markdown artifact without retrieval",
+      "prompt": "Create a short Markdown artifact titled \"Competitor Research Checklist\" containing exactly five actionable checklist items for evaluating competitors without blindly copying them. Do not search the knowledge base. Display the artifact in the Artifact Viewer. Keep the response concise."
+    },
+    {
+      "id": 13,
+      "name": "Plain-text generation without retrieval, citations, or artifacts",
+      "prompt": "Write a plain-text list of exactly three tips for researching competitors without blindly copying them. Do not search the knowledge base, cite sources, validate against sources, or create an artifact. Return only the three numbered tips."
+    },
+    {
+      "id": 14,
+      "name": "Exact-output regression, second attempt",
+      "prompt": "Return exactly the following characters, with no quotation marks, Markdown, explanation, or additional text:\r\n\r\nPASS-123"
+    }
+  ]
+}

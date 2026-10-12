@@ -1,0 +1,45 @@
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.pyc
+node_modules/
+dist/
+data/
+.runtime/
+test-results/
+playwright-report/
+*.log
+*.egg-info/
+.coverage
+
+*.tsbuildinfo
+
+# Local editor, coverage, and temporary output
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak
+*.swp
+coverage/
+**/coverage/
+
+# Raw benchmark captures can contain generated drafts and source evidence.
+benchmark/*-raw.json
+
+# Assessment-provided benchmark material: do not redistribute without permission.
+benchmark/lenny_20_test_benchmark.md
+
+# Assessment-derived planning document retained locally; redistribution rights are unclear.
+/PRD.md
+
+# Originals retained locally; redistribution rights were not established.
+/evals/demo-guests.json
+/skills/ship30/SKILL.md
+
+# Local compliance and work-session notes may quote private assessment/user material.
+/assessment/
+/agent-transcripts/

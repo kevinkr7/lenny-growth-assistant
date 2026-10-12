@@ -1,0 +1,95 @@
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_DB: lenny
+      POSTGRES_USER: lenny
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lenny_local_only}
+    ports: ["127.0.0.1:5433:5432"]
+    volumes: ["postgres_data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lenny -d lenny"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  ollama:
+    image: ollama/ollama:0.40.1
+    environment:
+      OLLAMA_NO_CLOUD: "1"
+    ports: ["127.0.0.1:11434:11434"]
+    volumes: ["ollama_data:/root/.ollama"]
+  model-init:
+    image: curlimages/curl:8.12.1
+    depends_on: [ollama]
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >-
+        until curl -fsS http://ollama:11434/api/tags >/dev/null; do sleep 2; done;
+        curl --fail-with-body -sS http://ollama:11434/api/pull -d '{"name":"${OLLAMA_MODEL:-qwen3:4b-instruct-2507-q4_K_M}","stream":false}'
+  pi-agent:
+    build:
+      context: ./pi-agent
+      dockerfile: Dockerfile
+    environment:
+      PI_AGENT_HOST: 0.0.0.0
+      PI_AGENT_PORT: 8001
+      PI_AGENT_MAX_TIMEOUT_MS: ${PI_AGENT_MAX_TIMEOUT_MS:-360000}
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8001/healthz').then(r => { if (!r.ok) process.exit(1) }).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      <<: &backend-env
+        DATABASE_URL: postgresql+asyncpg://lenny:${POSTGRES_PASSWORD:-lenny_local_only}@db:5432/lenny
+        OLLAMA_BASE_URL: http://ollama:11434
+        OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3:4b-instruct-2507-q4_K_M}
+        PI_AGENT_URL: http://pi-agent:8001
+        DEFAULT_PROVIDER: ${DEFAULT_PROVIDER:-ollama}
+        EMBEDDING_CACHE_DIR: /data/embeddings
+        RAG_MIN_SCORE: ${RAG_MIN_SCORE:-0.45}
+        RAG_TOP_K: ${RAG_TOP_K:-8}
+        MODEL_TIMEOUT_SECONDS: ${MODEL_TIMEOUT_SECONDS:-360}
+        MODEL_MAX_TOKENS: ${MODEL_MAX_TOKENS:-3500}
+        OLLAMA_CONTEXT_TOKENS: ${OLLAMA_CONTEXT_TOKENS:-8192}
+        CONTEXT_CHAR_LIMIT: ${CONTEXT_CHAR_LIMIT:-8000}
+        CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash-lite}
+      GEMINI_TIMEOUT_SECONDS: ${GEMINI_TIMEOUT_SECONDS:-90}
+    volumes: ["knowledge_data:/data"]
+    ports: ["127.0.0.1:8000:8000"]
+    depends_on:
+      db: { condition: service_healthy }
+      pi-agent: { condition: service_healthy }
+    command: ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz')"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+  ingest:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      <<: *backend-env
+      GEMINI_API_KEY: ""
+      TRANSCRIPT_REVISION: ${TRANSCRIPT_REVISION:-main}
+    volumes: ["knowledge_data:/data"]
+    depends_on:
+      api: { condition: service_healthy }
+    command: ["python", "/app/scripts/fetch_and_ingest.py", "--path", "/data/transcripts"]
+  web:
+    build: ./frontend
+    ports: ["127.0.0.1:3000:80"]
+    depends_on:
+      api: { condition: service_healthy }
+volumes:
+  postgres_data:
+  ollama_data:
+  knowledge_data:
